@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Cây, Trăng và Lồng Đèn</title>
+    <style>
+        canvas { background: #000; }
+    </style>
+</head>
+<body>
+    <canvas id="myCanvas" width="800" height="600"></canvas>
+    <script>
+        const canvas = document.getElementById('myCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function drawMoon() {
+            ctx.beginPath();
+            ctx.arc(400, 150, 80, 0, Math.PI * 2);
+            ctx.fillStyle = '#ffe6b3';
+            ctx.fill();
+        }
+
+        function drawTree() {
+            ctx.beginPath();
+            ctx.moveTo(400, 400);
+            ctx.bezierCurveTo(350, 300, 300, 250, 350, 200);
+            ctx.bezierCurveTo(400, 150, 450, 200, 500, 250);
+            ctx.bezierCurveTo(450, 300, 400, 400, 400, 400);
+            ctx.fillStyle = '#ff9999';
+            ctx.fill();
+            ctx.moveTo(400, 400);
+            ctx.lineTo(390, 500);
+            ctx.lineTo(410, 500);
+            ctx.fillStyle = '#8B4513';
+            ctx.fill();
+        }
+
+        function drawLantern(x, y) {
+            ctx.beginPath();
+            ctx.ellipse(x, y, 20, 30, 0, 0, Math.PI * 2);
+            ctx.fillStyle = '#ff4500';
+            ctx.fill();
+            ctx.moveTo(x, y + 30);
+            ctx.lineTo(x - 5, y + 50);
+            ctx.lineTo(x + 5, y + 50);
+            ctx.fill();
+            ctx.arc(x, y - 10, 5, 0, Math.PI * 2);
+            ctx.fillStyle = '#ffff99';
+            ctx.fill();
+        }
+
+        function drawLanterns() {
+            for (let i = 0; i < 10; i++) {
+                let x = Math.random() * 800;
+                let y = Math.random() * 300;
+                drawLantern(x, y);
+            }
+        }
+
+        function drawScene() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawMoon();
+            drawTree();
+            drawLanterns();
+        }
+
+        setInterval(drawScene, 1000);
+    </script>
+</body>
+</html>
