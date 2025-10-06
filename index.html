@@ -1,4 +1,4 @@
-html<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -45,12 +45,12 @@ html<!DOCTYPE html>
             ctx.globalAlpha = 1;
         }
 
-        // Vẽ trăng sáng hơn, nghiêng qua trái
+        // Vẽ trăng nghiêng về bên trái
         function drawMoon() {
-            const centerX = canvas.width * 0.3; // Nghiêng qua trái
+            const centerX = canvas.width * 0.3; // Nghiêng về trái
             const centerY = canvas.height * 0.25;
             const gradient = ctx.createRadialGradient(centerX, centerY, 60, centerX, centerY, 150);
-            gradient.addColorStop(0, '#fff5e1'); // Sáng hơn
+            gradient.addColorStop(0, '#fff5e1');
             gradient.addColorStop(0.5, '#ffe6b3');
             gradient.addColorStop(1, '#ffd700');
             ctx.save();
@@ -61,7 +61,7 @@ html<!DOCTYPE html>
             ctx.fillStyle = gradient;
             ctx.fill();
             ctx.restore();
-            ctx.globalAlpha = 0.4; // Hiệu ứng glow
+            ctx.globalAlpha = 0.4;
             ctx.fillStyle = '#fff5e1';
             ctx.beginPath();
             ctx.arc(centerX, centerY, 130, 0, Math.PI * 2);
@@ -69,7 +69,7 @@ html<!DOCTYPE html>
             ctx.globalAlpha = 1;
         }
 
-        // Vẽ cây hoa anh đào hình tam giác với 50,000 bông cố định
+        // Vẽ cây hoa anh đào với 500,000 bông, tán rộng, thưa dần ra ngoài
         const flowers = [];
         function drawTree() {
             // Thân cây tam giác
@@ -77,20 +77,23 @@ html<!DOCTYPE html>
             ctx.beginPath();
             const centerX = canvas.width / 2;
             const baseY = canvas.height * 0.7;
-            ctx.moveTo(centerX, baseY * 0.4); // Đỉnh tam giác cao hơn
-            ctx.lineTo(centerX - 150, baseY); // Căn trái rộng hơn
-            ctx.lineTo(centerX + 150, baseY); // Căn phải rộng hơn
+            ctx.moveTo(centerX, baseY * 0.4);
+            ctx.lineTo(centerX - 200, baseY); // Tán rộng hơn
+            ctx.lineTo(centerX + 200, baseY);
             ctx.fill();
 
-            // Tạo 50,000 bông hoa cố định trong hình tam giác
+            // Tạo 500,000 bông hoa cố định, thưa dần ra ngoài
             if (flowers.length === 0) {
-                for (let i = 0; i < 50000; i++) {
-                    const angle = Math.random() * Math.PI; // Giới hạn trong tam giác
-                    const radius = Math.random() * 200 + 50; // Bán kính từ đỉnh xuống
-                    const x = centerX + Math.cos(angle) * radius * (1 - radius / 250); // Điều chỉnh phân bố
-                    const y = baseY * 0.4 + Math.sin(angle) * radius;
-                    if (y < baseY && x >= centerX - 150 && x <= centerX + 150) {
-                        flowers.push({ x, y, size: Math.random() * 2 + 1 });
+                for (let i = 0; i < 500000; i++) {
+                    const angle = Math.random() * Math.PI;
+                    const radius = Math.random() * 250 + 50; // Tăng bán kính để tán rộng
+                    const density = 1 - radius / 300; // Thưa dần khi ra ngoài
+                    if (Math.random() < density && radius < 250) {
+                        const x = centerX + Math.cos(angle) * radius * (1 - radius / 300);
+                        const y = baseY * 0.4 + Math.sin(angle) * radius;
+                        if (y < baseY && x >= centerX - 200 && x <= centerX + 200) {
+                            flowers.push({ x, y, size: Math.random() * 2 + 1 });
+                        }
                     }
                 }
             }
@@ -102,7 +105,7 @@ html<!DOCTYPE html>
             });
         }
 
-        // Cánh hoa rơi ở ngoài rìa (chuyển động)
+        // Cánh hoa chuyển động ở rìa với khoảng cách vừa đủ
         const fallingFlowers = [];
         function createFallingFlower() {
             const edgeX = Math.random() * canvas.width;
@@ -126,7 +129,7 @@ html<!DOCTYPE html>
                     fallingFlowers.splice(i, 1);
                 }
             }
-            if (Math.random() < 0.02) createFallingFlower(); // Tạo hoa rơi ngẫu nhiên
+            if (Math.random() < 0.03) createFallingFlower(); // Tăng tần suất rơi
         }
 
         function drawFallingFlowers() {
@@ -140,46 +143,57 @@ html<!DOCTYPE html>
             ctx.globalAlpha = 1;
         }
 
-        // Vẽ thỏ (giữ nguyên, không thay đổi)
+        // Vẽ thỏ xinh hơn với chuyển động nhẹ
         const rabbits = [
-            { x: canvas.width / 2 - 80, y: canvas.height * 0.75, angle: 0 },
-            { x: canvas.width / 2 - 20, y: canvas.height * 0.75, angle: 0 },
-            { x: canvas.width / 2 + 40, y: canvas.height * 0.75, angle: 0 }
+            { x: canvas.width / 2 - 100, y: canvas.height * 0.75, angle: 0, offset: 0 },
+            { x: canvas.width / 2 - 20, y: canvas.height * 0.75, angle: 0, offset: 0 },
+            { x: canvas.width / 2 + 60, y: canvas.height * 0.75, angle: 0, offset: 0 }
         ];
 
-        function drawRabbit(x, y, angle) {
+        function drawRabbit(x, y, angle, offset) {
             ctx.save();
-            ctx.translate(x, y);
+            ctx.translate(x, y + offset);
             ctx.rotate(angle);
+            // Thân
             ctx.beginPath();
-            ctx.ellipse(0, 0, 20, 15, 0, 0, Math.PI * 2);
-            ctx.fillStyle = '#d3a8a8';
+            ctx.ellipse(0, 0, 25, 15, 0, 0, Math.PI * 2);
+            ctx.fillStyle = '#f4c2c2';
             ctx.fill();
+            // Đầu
             ctx.beginPath();
-            ctx.arc(-15, -10, 10, 0, Math.PI * 2);
+            ctx.arc(-20, -10, 12, 0, Math.PI * 2);
             ctx.fill();
+            // Tai trái
             ctx.beginPath();
-            ctx.ellipse(-20, -20, 4, 12, Math.PI / 6, 0, Math.PI * 2);
+            ctx.ellipse(-28, -20, 5, 15, Math.PI / 6, 0, Math.PI * 2);
             ctx.fill();
+            // Tai phải
             ctx.beginPath();
-            ctx.ellipse(-10, -20, 4, 12, -Math.PI / 6, 0, Math.PI * 2);
+            ctx.ellipse(-12, -20, 5, 15, -Math.PI / 6, 0, Math.PI * 2);
             ctx.fill();
+            // Mắt
             ctx.beginPath();
-            ctx.arc(-17, -12, 1.5, 0, Math.PI * 2);
+            ctx.arc(-22, -12, 2, 0, Math.PI * 2);
             ctx.fillStyle = '#000';
+            ctx.fill();
+            // Mũi
+            ctx.beginPath();
+            ctx.arc(-18, -8, 2, 0, Math.PI * 2);
+            ctx.fillStyle = '#ff9999';
             ctx.fill();
             ctx.restore();
         }
 
         function updateRabbits() {
             rabbits.forEach(rabbit => {
-                rabbit.angle = Math.sin(Date.now() * 0.005) * 0.1;
+                rabbit.angle = Math.sin(Date.now() * 0.003) * 0.1; // Lắc nhẹ
+                rabbit.offset = Math.sin(Date.now() * 0.005) * 5; // Nhảy nhẹ
             });
         }
 
-        // Vẽ lồng đèn với chuyển động chậm
+        // Vẽ lồng đèn với chuyển động chậm, thêm nhiều hơn
         const lanterns = [];
-        for (let i = 0; i < 15; i++) { // Tăng số lượng lồng đèn
+        for (let i = 0; i < 20; i++) { // Tăng số lượng lên 20
             lanterns.push({ x: Math.random() * canvas.width, y: Math.random() * (canvas.height * 0.5), speed: 0.5 });
         }
 
@@ -214,7 +228,7 @@ html<!DOCTYPE html>
             drawTree();
             drawFallingFlowers();
             lanterns.forEach(lantern => drawLantern(lantern.x, lantern.y));
-            rabbits.forEach(rabbit => drawRabbit(rabbit.x, rabbit.y, rabbit.angle));
+            rabbits.forEach(rabbit => drawRabbit(rabbit.x, rabbit.y, rabbit.angle, rabbit.offset));
         }
 
         // Animation mượt mà
