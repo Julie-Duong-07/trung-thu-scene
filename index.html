@@ -69,7 +69,7 @@
             ctx.globalAlpha = 1;
         }
 
-        // Vẽ cây hoa anh đào giống ảnh mẫu, thân dài hơn, 2000 hoa xoè rộng
+        // Vẽ cây hoa anh đào giống ảnh mẫu, thân dài hơn, thêm nhiều hoa phủ tròn tán cây
         const flowers = [];
         function drawTree() {
             // Thân cây tam giác dài hơn
@@ -77,23 +77,22 @@
             ctx.beginPath();
             const centerX = canvas.width / 2;
             const baseY = canvas.height * 0.75;
-            ctx.moveTo(centerX, baseY * 0.4); // Đỉnh cao hơn
+            const tipY = baseY * 0.4;
+            ctx.moveTo(centerX, tipY); // Đỉnh cao hơn
             ctx.lineTo(centerX - 150, baseY); // Căn trái rộng hơn
             ctx.lineTo(centerX + 150, baseY); // Căn phải rộng hơn
             ctx.fill();
 
-            // Tạo và vẽ 2000 bông hoa cố định, xoè rộng, thưa dần
+            // Tạo và vẽ nhiều bông hoa cố định hơn (4000), phủ tròn quanh tán cây
             if (flowers.length === 0) {
-                for (let i = 0; i < 2000; i++) {
-                    const angle = Math.random() * Math.PI;
-                    const radius = Math.random() * 300; // Xoè rộng hơn
-                    const density = 1 - (radius / 350); // Thưa dần ra rìa
-                    if (Math.random() < density) {
-                        const x = centerX + Math.cos(angle) * radius;
-                        const y = baseY * 0.4 + Math.sin(angle) * radius * 0.7; // Phủ gần cả cây
-                        if (y < baseY) {
-                            flowers.push({ x, y, size: Math.random() * 3 + 1 });
-                        }
+                const canopyRadius = 300;
+                for (let i = 0; i < 4000; i++) {
+                    const angle = Math.random() * 2 * Math.PI;
+                    const radius = canopyRadius * Math.sqrt(Math.random()); // Phân bố đều cho phủ tròn
+                    const x = centerX + Math.cos(angle) * radius;
+                    const y = tipY + Math.sin(angle) * radius;
+                    if (y < baseY) {
+                        flowers.push({ x, y, size: Math.random() * 3 + 1 });
                     }
                 }
             }
@@ -110,10 +109,11 @@
         function createFallingFlower() {
             const centerX = canvas.width / 2;
             const baseY = canvas.height * 0.75;
+            const tipY = baseY * 0.4;
             const angle = Math.random() * Math.PI * 2;
             const radius = 250 + Math.random() * 100; // Ở rìa ngoài
             const x = centerX + Math.cos(angle) * radius;
-            const y = baseY * 0.4 + Math.sin(angle) * radius * 0.7;
+            const y = tipY + Math.sin(angle) * radius;
             fallingFlowers.push({
                 x: x,
                 y: y,
@@ -196,11 +196,15 @@
             });
         }
 
-        // Vẽ lồng đèn di chuyển chậm từ dưới lên
+        // Vẽ lồng đèn di chuyển chậm từ dưới lên, ngẫu nhiên không theo hàng
         const lanterns = [];
         function initializeLanterns() {
-            for (let i = 0; i < 20; i++) {
-                lanterns.push({ x: Math.random() * canvas.width, y: canvas.height, speed: 0.5 }); // Khởi tạo từ dưới
+            for (let i = 0; i < 30; i++) { // Thêm nhiều hơn
+                lanterns.push({ 
+                    x: Math.random() * canvas.width, 
+                    y: Math.random() * canvas.height, // Vị trí y ngẫu nhiên để phân bố đều
+                    speed: 0.3 + Math.random() * 0.7 // Tốc độ ngẫu nhiên để bay lộn xộn
+                });
             }
         }
         initializeLanterns();
