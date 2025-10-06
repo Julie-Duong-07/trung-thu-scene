@@ -82,4 +82,185 @@
             ctx.lineTo(centerX + 150, baseY); // Căn phải rộng hơn
             ctx.fill();
 
-            // Tạo và vẽ 200
+            // Tạo và vẽ 2000 bông hoa cố định, xoè rộng, thưa dần
+            if (flowers.length === 0) {
+                for (let i = 0; i < 2000; i++) {
+                    const angle = Math.random() * Math.PI;
+                    const radius = Math.random() * 300; // Xoè rộng hơn
+                    const density = 1 - (radius / 350); // Thưa dần ra rìa
+                    if (Math.random() < density) {
+                        const x = centerX + Math.cos(angle) * radius;
+                        const y = baseY * 0.4 + Math.sin(angle) * radius * 0.7; // Phủ gần cả cây
+                        if (y < baseY) {
+                            flowers.push({ x, y, size: Math.random() * 3 + 1 });
+                        }
+                    }
+                }
+            }
+            flowers.forEach(flower => {
+                ctx.beginPath();
+                ctx.arc(flower.x, flower.y, flower.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 153, 153, ${Math.random() * 0.7 + 0.3})`;
+                ctx.fill();
+            });
+        }
+
+        // Cánh hoa chuyển động ở rìa với khoảng cách vừa đủ
+        const fallingFlowers = [];
+        function createFallingFlower() {
+            const centerX = canvas.width / 2;
+            const baseY = canvas.height * 0.75;
+            const angle = Math.random() * Math.PI * 2;
+            const radius = 250 + Math.random() * 100; // Ở rìa ngoài
+            const x = centerX + Math.cos(angle) * radius;
+            const y = baseY * 0.4 + Math.sin(angle) * radius * 0.7;
+            fallingFlowers.push({
+                x: x,
+                y: y,
+                size: Math.random() * 3 + 2,
+                speedY: Math.random() * 0.5 + 0.2,
+                speedX: (Math.random() - 0.5) * 0.3,
+                opacity: 1
+            });
+        }
+
+        function updateFallingFlowers() {
+            for (let i = fallingFlowers.length - 1; i >= 0; i--) {
+                fallingFlowers[i].y += fallingFlowers[i].speedY;
+                fallingFlowers[i].x += fallingFlowers[i].speedX;
+                fallingFlowers[i].opacity -= 0.005;
+                if (fallingFlowers[i].y > canvas.height || fallingFlowers[i].opacity <= 0) {
+                    fallingFlowers.splice(i, 1);
+                }
+            }
+            if (Math.random() < 0.03) createFallingFlower();
+        }
+
+        function drawFallingFlowers() {
+            fallingFlowers.forEach(flower => {
+                ctx.globalAlpha = flower.opacity;
+                ctx.beginPath();
+                ctx.arc(flower.x, flower.y, flower.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 153, 153, ${flower.opacity})`;
+                ctx.fill();
+            });
+            ctx.globalAlpha = 1;
+        }
+
+        // Vẽ thỏ xinh hơn với chuyển động nhẹ dưới gốc cây
+        const rabbits = [
+            { x: canvas.width / 2 - 80, y: canvas.height * 0.75, angle: 0, hop: 0 },
+            { x: canvas.width / 2 - 20, y: canvas.height * 0.75, angle: 0, hop: 0 },
+            { x: canvas.width / 2 + 40, y: canvas.height * 0.75, angle: 0, hop: 0 }
+        ];
+
+        function drawRabbit(x, y, angle, hop) {
+            ctx.save();
+            ctx.translate(x, y - hop);
+            ctx.rotate(angle);
+            // Thân
+            ctx.beginPath();
+            ctx.ellipse(0, 0, 20, 15, 0, 0, Math.PI * 2);
+            ctx.fillStyle = '#d3a8a8';
+            ctx.fill();
+            // Đầu
+            ctx.beginPath();
+            ctx.arc(-15, -10, 10, 0, Math.PI * 2);
+            ctx.fill();
+            // Tai trái
+            ctx.beginPath();
+            ctx.ellipse(-20, -20, 4, 12, Math.PI / 6, 0, Math.PI * 2);
+            ctx.fill();
+            // Tai phải
+            ctx.beginPath();
+            ctx.ellipse(-10, -20, 4, 12, -Math.PI / 6, 0, Math.PI * 2);
+            ctx.fill();
+            // Mắt
+            ctx.beginPath();
+            ctx.arc(-17, -12, 1.5, 0, Math.PI * 2);
+            ctx.fillStyle = '#000';
+            ctx.fill();
+            // Mũi
+            ctx.beginPath();
+            ctx.arc(-12, -6, 1, 0, Math.PI * 2);
+            ctx.fillStyle = '#ff69b4';
+            ctx.fill();
+            ctx.restore();
+        }
+
+        // Cập nhật chuyển động xinh của thỏ
+        function updateRabbits() {
+            rabbits.forEach(rabbit => {
+                rabbit.angle = Math.sin(Date.now() * 0.005) * 0.1;
+                rabbit.hop = Math.abs(Math.sin(Date.now() * 0.01)) * 5;
+            });
+        }
+
+        // Vẽ lồng đèn di chuyển chậm từ dưới lên
+        const lanterns = [];
+        function initializeLanterns() {
+            for (let i = 0; i < 20; i++) {
+                lanterns.push({ x: Math.random() * canvas.width, y: canvas.height, speed: 0.5 }); // Khởi tạo từ dưới
+            }
+        }
+        initializeLanterns();
+
+        function drawLantern(x, y) {
+            ctx.beginPath();
+            ctx.ellipse(x, y, 20, 30, 0, 0, Math.PI * 2);
+            ctx.fillStyle = '#ff4500';
+            ctx.fill();
+            ctx.beginPath();
+            ctx.moveTo(x, y + 30);
+            ctx.lineTo(x - 5, y + 50);
+            ctx.lineTo(x + 5, y + 50);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(x, y - 10, 5, 0, Math.PI * 2);
+            ctx.fillStyle = '#ffff99';
+            ctx.fill();
+        }
+
+        function updateLanterns() {
+            lanterns.forEach(lantern => {
+                lantern.y -= lantern.speed;
+                if (lantern.y < -50) lantern.y = canvas.height; // Reset từ dưới
+            });
+        }
+
+        // Vẽ toàn cảnh
+        function drawScene() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawStars();
+            drawMoon();
+            drawTree();
+            drawFallingFlowers();
+            lanterns.forEach(lantern => drawLantern(lantern.x, lantern.y));
+            rabbits.forEach(rabbit => drawRabbit(rabbit.x, rabbit.y, rabbit.angle, rabbit.hop));
+        }
+
+        // Animation mượt mà
+        function animate() {
+            updateRabbits();
+            updateLanterns();
+            updateFallingFlowers();
+            drawScene();
+            requestAnimationFrame(animate);
+        }
+
+        // Điều chỉnh kích thước khi thay đổi cửa sổ
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            stars.forEach(star => {
+                star.x = Math.random() * canvas.width;
+                star.y = Math.random() * (canvas.height * 0.5);
+            });
+            lanterns.length = 0; // Reset lồng đèn khi resize
+            initializeLanterns();
+        });
+
+        animate();
+    </script>
+</body>
+</html>
