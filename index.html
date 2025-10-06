@@ -26,6 +26,8 @@
         canvas.height = window.innerHeight;
         const ctx = canvas.getContext('2d');
 
+        const treeOffsetY = 100; // Khoảng 3 cm (giả sử 96 DPI, 3 cm ≈ 113 px, lấy 100 cho gần)
+
         // Tạo mảng sao
         const stars = [];
         for (let i = 0; i < 100; i++) {
@@ -76,17 +78,17 @@
             ctx.fillStyle = '#8B4513';
             ctx.beginPath();
             const centerX = canvas.width / 2;
-            const baseY = canvas.height * 0.75;
-            const tipY = baseY * 0.4;
+            const baseY = canvas.height * 0.75 + treeOffsetY;
+            const tipY = canvas.height * 0.3 + treeOffsetY;
             ctx.moveTo(centerX, tipY); // Đỉnh cao hơn
             ctx.lineTo(centerX - 150, baseY); // Căn trái rộng hơn
             ctx.lineTo(centerX + 150, baseY); // Căn phải rộng hơn
             ctx.fill();
 
-            // Tạo và vẽ nhiều bông hoa cố định hơn (4000), phủ tròn quanh tán cây
+            // Tạo và vẽ nhiều bông hoa cố định hơn (6000), phủ tròn quanh tán cây
             if (flowers.length === 0) {
                 const canopyRadius = 300;
-                for (let i = 0; i < 4000; i++) {
+                for (let i = 0; i < 6000; i++) {
                     const angle = Math.random() * 2 * Math.PI;
                     const radius = canopyRadius * Math.sqrt(Math.random()); // Phân bố đều cho phủ tròn
                     const x = centerX + Math.cos(angle) * radius;
@@ -108,8 +110,8 @@
         const fallingFlowers = [];
         function createFallingFlower() {
             const centerX = canvas.width / 2;
-            const baseY = canvas.height * 0.75;
-            const tipY = baseY * 0.4;
+            const baseY = canvas.height * 0.75 + treeOffsetY;
+            const tipY = canvas.height * 0.3 + treeOffsetY;
             const angle = Math.random() * Math.PI * 2;
             const radius = 250 + Math.random() * 100; // Ở rìa ngoài
             const x = centerX + Math.cos(angle) * radius;
@@ -149,9 +151,9 @@
 
         // Vẽ thỏ xinh hơn với chuyển động nhẹ dưới gốc cây
         const rabbits = [
-            { x: canvas.width / 2 - 80, y: canvas.height * 0.75, angle: 0, hop: 0 },
-            { x: canvas.width / 2 - 20, y: canvas.height * 0.75, angle: 0, hop: 0 },
-            { x: canvas.width / 2 + 40, y: canvas.height * 0.75, angle: 0, hop: 0 }
+            { x: canvas.width / 2 - 80, y: canvas.height * 0.75 + treeOffsetY, angle: 0, hop: 0 },
+            { x: canvas.width / 2 - 20, y: canvas.height * 0.75 + treeOffsetY, angle: 0, hop: 0 },
+            { x: canvas.width / 2 + 40, y: canvas.height * 0.75 + treeOffsetY, angle: 0, hop: 0 }
         ];
 
         function drawRabbit(x, y, angle, hop) {
@@ -254,12 +256,20 @@
 
         // Điều chỉnh kích thước khi thay đổi cửa sổ
         window.addEventListener('resize', () => {
+            const oldWidth = canvas.width;
+            const oldHeight = canvas.height;
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             stars.forEach(star => {
                 star.x = Math.random() * canvas.width;
                 star.y = Math.random() * (canvas.height * 0.5);
             });
+            const centerX = canvas.width / 2;
+            rabbits[0].x = centerX - 80;
+            rabbits[1].x = centerX - 20;
+            rabbits[2].x = centerX + 40;
+            rabbits.forEach(r => r.y = canvas.height * 0.75 + treeOffsetY);
+            flowers.length = 0; // Tái tạo hoa để phù hợp kích thước mới
             lanterns.length = 0; // Reset lồng đèn khi resize
             initializeLanterns();
         });
