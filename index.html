@@ -1,11 +1,4 @@
-Để cải thiện code dựa trên hình ảnh bạn cung cấp, mình sẽ:
-
-Làm cho đèn lồng (lanterns) chuyển động chậm lại bằng cách giảm tốc độ di chuyển.
-Tạo lại cây hoa anh đào giống ảnh mẫu (hình tam giác nâu với hoa rụng như chấm hồng), thay vì cây sakura phức tạp trước đó.
-Giữ trăng và sao như trong code hiện tại, nhưng tối ưu để phù hợp với phong cách hình ảnh.
-
-Dưới đây là code mới cho file index.html:
-html<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -50,33 +43,68 @@ html<!DOCTYPE html>
             ctx.fill();
         }
 
-        // Vẽ cây hoa anh đào kiểu đơn giản (tam giác nâu với hoa rụng)
+        // Vẽ cây hoa anh đào to hơn với cực nhiều hoa
         function drawTree() {
-            // Thân cây (tam giác nâu)
+            // Thân cây to hơn (rộng và cao hơn)
             ctx.fillStyle = '#8B4513';
             ctx.beginPath();
-            ctx.moveTo(400, 400);
-            ctx.lineTo(380, 500);
-            ctx.lineTo(420, 500);
+            ctx.moveTo(400, 300); // Bắt đầu cao hơn để cây to
+            ctx.lineTo(350, 500);
+            ctx.lineTo(450, 500);
             ctx.fill();
 
-            // Hoa rụng (chấm hồng ngẫu nhiên)
-            for (let i = 0; i < 30; i++) {
-                const x = 400 + (Math.random() - 0.5) * 100;
-                const y = 400 + (Math.random() - 0.5) * 100;
-                if (y < 500) { // Giới hạn hoa không vượt quá chân cây
+            // Hoa anh đào cực nhiều (tăng lên 300 cánh, phân bố rộng)
+            for (let i = 0; i < 300; i++) {
+                const x = 400 + (Math.random() - 0.5) * 300; // Phạm vi rộng hơn
+                const y = 300 + (Math.random() - 0.5) * 200; // Phạm vi cao hơn
+                if (y < 500) { // Giới hạn không vượt quá chân cây
                     ctx.beginPath();
-                    ctx.arc(x, y, Math.random() * 3 + 1, 0, Math.PI * 2);
+                    ctx.arc(x, y, Math.random() * 4 + 2, 0, Math.PI * 2); // Cánh hoa to hơn một chút
                     ctx.fillStyle = `rgba(255, 153, 153, ${Math.random() * 0.7 + 0.3})`;
                     ctx.fill();
                 }
             }
+
+            // Vẽ 3 chú thỏ ngồi dưới gốc cây
+            drawRabbit(350, 480); // Thỏ 1
+            drawRabbit(390, 480); // Thỏ 2
+            drawRabbit(430, 480); // Thỏ 3
+        }
+
+        // Hàm vẽ chú thỏ đơn giản
+        function drawRabbit(x, y) {
+            // Thân (elip)
+            ctx.beginPath();
+            ctx.ellipse(x, y, 15, 10, 0, 0, Math.PI * 2);
+            ctx.fillStyle = '#d3a8a8'; // Màu hồng nhạt
+            ctx.fill();
+
+            // Đầu (vòng tròn)
+            ctx.beginPath();
+            ctx.arc(x - 10, y - 5, 8, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Tai trái
+            ctx.beginPath();
+            ctx.ellipse(x - 15, y - 15, 3, 8, Math.PI / 4, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Tai phải
+            ctx.beginPath();
+            ctx.ellipse(x - 5, y - 15, 3, 8, -Math.PI / 4, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Mắt (điểm nhỏ)
+            ctx.beginPath();
+            ctx.arc(x - 12, y - 7, 1, 0, Math.PI * 2);
+            ctx.fillStyle = '#000';
+            ctx.fill();
         }
 
         // Vẽ lồng đèn với chuyển động chậm
         const lanterns = [];
         for (let i = 0; i < 10; i++) {
-            lanterns.push({ x: Math.random() * 800, y: Math.random() * 300, speed: 0.5 }); // Tốc độ chậm (0.5 thay vì ngẫu nhiên nhanh)
+            lanterns.push({ x: Math.random() * 800, y: Math.random() * 300, speed: 0.5 });
         }
 
         function drawLantern(x, y) {
@@ -98,8 +126,8 @@ html<!DOCTYPE html>
         // Cập nhật và vẽ lồng đèn
         function updateLanterns() {
             lanterns.forEach(lantern => {
-                lantern.y -= lantern.speed; // Chuyển động lên chậm
-                if (lantern.y < -50) lantern.y = 350; // Reset khi ra khỏi khung hình
+                lantern.y -= lantern.speed;
+                if (lantern.y < -50) lantern.y = 350;
             });
         }
 
