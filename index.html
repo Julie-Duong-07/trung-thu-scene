@@ -1,10 +1,17 @@
-<!DOCTYPE html>
+Để cải thiện code dựa trên hình ảnh bạn cung cấp, mình sẽ:
+
+Làm cho đèn lồng (lanterns) chuyển động chậm lại bằng cách giảm tốc độ di chuyển.
+Tạo lại cây hoa anh đào giống ảnh mẫu (hình tam giác nâu với hoa rụng như chấm hồng), thay vì cây sakura phức tạp trước đó.
+Giữ trăng và sao như trong code hiện tại, nhưng tối ưu để phù hợp với phong cách hình ảnh.
+
+Dưới đây là code mới cho file index.html:
+html<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <title>Cây, Trăng và Lồng Đèn</title>
     <style>
-        canvas { background: #1a1a2e; } /* Nền đen sâu hơn */
+        canvas { background: #1a1a2e; } /* Nền đen sâu */
     </style>
 </head>
 <body>
@@ -32,7 +39,7 @@
             ctx.globalAlpha = 1;
         }
 
-        // Vẽ trăng với hiệu ứng glow
+        // Vẽ trăng
         function drawMoon() {
             const gradient = ctx.createRadialGradient(400, 150, 50, 400, 150, 100);
             gradient.addColorStop(0, '#ffffe0');
@@ -41,40 +48,37 @@
             ctx.arc(400, 150, 80, 0, Math.PI * 2);
             ctx.fillStyle = gradient;
             ctx.fill();
-            ctx.globalAlpha = 0.3; // Hiệu ứng glow
-            ctx.fillStyle = '#ffffe0';
-            ctx.arc(400, 150, 100, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.globalAlpha = 1;
         }
 
-        // Vẽ cây hoa anh đào đẹp hơn
+        // Vẽ cây hoa anh đào kiểu đơn giản (tam giác nâu với hoa rụng)
         function drawTree() {
-            // Thân cây với gradient
-            const trunkGradient = ctx.createLinearGradient(400, 400, 400, 500);
-            trunkGradient.addColorStop(0, '#8B4513');
-            trunkGradient.addColorStop(1, '#5c2e0a');
-            ctx.fillStyle = trunkGradient;
+            // Thân cây (tam giác nâu)
+            ctx.fillStyle = '#8B4513';
             ctx.beginPath();
             ctx.moveTo(400, 400);
             ctx.lineTo(380, 500);
             ctx.lineTo(420, 500);
             ctx.fill();
 
-            // Hoa anh đào (nhiều cánh hoa nhỏ)
-            for (let i = 0; i < 50; i++) {
-                const angle = Math.random() * Math.PI * 2;
-                const radius = Math.random() * 150 + 200;
-                const x = 400 + Math.cos(angle) * radius;
-                const y = 400 + Math.sin(angle) * radius;
-                ctx.beginPath();
-                ctx.arc(x, y, Math.random() * 5 + 3, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(255, 153, 153, ${Math.random() * 0.7 + 0.3})`; // Màu hồng nhạt với độ trong suốt
-                ctx.fill();
+            // Hoa rụng (chấm hồng ngẫu nhiên)
+            for (let i = 0; i < 30; i++) {
+                const x = 400 + (Math.random() - 0.5) * 100;
+                const y = 400 + (Math.random() - 0.5) * 100;
+                if (y < 500) { // Giới hạn hoa không vượt quá chân cây
+                    ctx.beginPath();
+                    ctx.arc(x, y, Math.random() * 3 + 1, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255, 153, 153, ${Math.random() * 0.7 + 0.3})`;
+                    ctx.fill();
+                }
             }
         }
 
-        // Vẽ lồng đèn
+        // Vẽ lồng đèn với chuyển động chậm
+        const lanterns = [];
+        for (let i = 0; i < 10; i++) {
+            lanterns.push({ x: Math.random() * 800, y: Math.random() * 300, speed: 0.5 }); // Tốc độ chậm (0.5 thay vì ngẫu nhiên nhanh)
+        }
+
         function drawLantern(x, y) {
             ctx.beginPath();
             ctx.ellipse(x, y, 20, 30, 0, 0, Math.PI * 2);
@@ -91,13 +95,12 @@
             ctx.fill();
         }
 
-        // Vẽ nhiều lồng đèn bay
-        function drawLanterns() {
-            for (let i = 0; i < 10; i++) {
-                let x = Math.random() * 800;
-                let y = Math.random() * 300;
-                drawLantern(x, y);
-            }
+        // Cập nhật và vẽ lồng đèn
+        function updateLanterns() {
+            lanterns.forEach(lantern => {
+                lantern.y -= lantern.speed; // Chuyển động lên chậm
+                if (lantern.y < -50) lantern.y = 350; // Reset khi ra khỏi khung hình
+            });
         }
 
         // Vẽ toàn cảnh
@@ -106,11 +109,12 @@
             drawStars();
             drawMoon();
             drawTree();
-            drawLanterns();
+            lanterns.forEach(lantern => drawLantern(lantern.x, lantern.y));
         }
 
-        // Cập nhật liên tục
+        // Animation mượt mà
         function animate() {
+            updateLanterns();
             drawScene();
             requestAnimationFrame(animate);
         }
