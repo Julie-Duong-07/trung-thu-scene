@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+Suy nghĩ trong 18shtml<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -71,24 +71,24 @@
             ctx.globalAlpha = 1;
         }
 
-        // Vẽ cây hoa anh đào giống ảnh mẫu, thân dài hơn, thêm nhiều hoa phủ tròn tán cây
+        // Vẽ cây hoa anh đào giống ảnh mẫu, thân ngắn hơn, thêm nhiều hoa phủ rộng hơn
         const flowers = [];
         function drawTree() {
-            // Thân cây tam giác dài hơn
+            // Thân cây tam giác ngắn hơn
             ctx.fillStyle = '#8B4513';
             ctx.beginPath();
             const centerX = canvas.width / 2;
             const baseY = canvas.height * 0.75 + treeOffsetY;
-            const tipY = canvas.height * 0.3 + treeOffsetY;
-            ctx.moveTo(centerX, tipY); // Đỉnh cao hơn
+            const tipY = canvas.height * 0.5 + treeOffsetY; // Làm đỉnh thấp hơn để thân ngắn hơn
+            ctx.moveTo(centerX, tipY); // Đỉnh thấp hơn
             ctx.lineTo(centerX - 150, baseY); // Căn trái rộng hơn
             ctx.lineTo(centerX + 150, baseY); // Căn phải rộng hơn
             ctx.fill();
 
-            // Tạo và vẽ nhiều bông hoa cố định hơn (6000), phủ tròn quanh tán cây
+            // Tạo và vẽ nhiều bông hoa cố định hơn (7000-8000), phủ rộng hơn
             if (flowers.length === 0) {
-                const canopyRadius = 300;
-                for (let i = 0; i < 6000; i++) {
+                const canopyRadius = 400; // Tăng bán kính để phủ rộng hơn
+                for (let i = 0; i < 7000; i++) { // Thêm khoảng 1000-2000
                     const angle = Math.random() * 2 * Math.PI;
                     const radius = canopyRadius * Math.sqrt(Math.random()); // Phân bố đều cho phủ tròn
                     const x = centerX + Math.cos(angle) * radius;
@@ -111,9 +111,9 @@
         function createFallingFlower() {
             const centerX = canvas.width / 2;
             const baseY = canvas.height * 0.75 + treeOffsetY;
-            const tipY = canvas.height * 0.3 + treeOffsetY;
+            const tipY = canvas.height * 0.5 + treeOffsetY;
             const angle = Math.random() * Math.PI * 2;
-            const radius = 250 + Math.random() * 100; // Ở rìa ngoài
+            const radius = 350 + Math.random() * 100; // Điều chỉnh rìa ngoài theo canopy mới
             const x = centerX + Math.cos(angle) * radius;
             const y = tipY + Math.sin(angle) * radius;
             fallingFlowers.push({
@@ -234,6 +234,17 @@
             });
         }
 
+        // Vẽ dòng chữ "Happy Mid-Autumn Festival <3" trắng sáng ở giữa trên cùng
+        function drawText() {
+            ctx.font = 'bold 40px Arial';
+            ctx.fillStyle = '#ffffff';
+            ctx.textAlign = 'center';
+            ctx.shadowColor = '#ffffff';
+            ctx.shadowBlur = 10;
+            ctx.fillText("Happy Mid-Autumn Festival <3", canvas.width / 2, 50);
+            ctx.shadowBlur = 0;
+        }
+
         // Vẽ toàn cảnh
         function drawScene() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -243,6 +254,7 @@
             drawFallingFlowers();
             lanterns.forEach(lantern => drawLantern(lantern.x, lantern.y));
             rabbits.forEach(rabbit => drawRabbit(rabbit.x, rabbit.y, rabbit.angle, rabbit.hop));
+            drawText();
         }
 
         // Animation mượt mà
