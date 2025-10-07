@@ -187,21 +187,29 @@
 
     // Tai trái (nhỏ hơn ~25%)
     ctx.beginPath();
-    ctx.ellipse(-30, -30, 6, 18, Math.PI / 6, 0, Math.PI * 2);
+    ctx.moveTo(-30, -30); // Điểm bắt đầu trên đầu
+    ctx.quadraticCurveTo(-40, -40, -50, -30); // Cong sang trái
+    ctx.quadraticCurveTo(-40, -20, -30, -30); // Cong về để tạo hình tai
     ctx.fillStyle = '#d3a8a8';
     ctx.fill();
     ctx.beginPath();
-    ctx.ellipse(-30, -30, 4.5, 16.5, Math.PI / 6, 0, Math.PI * 2);
+    ctx.moveTo(-31, -29);
+    ctx.quadraticCurveTo(-39, -38, -48, -29); // Lớp trong nhỏ hơn
+    ctx.quadraticCurveTo(-39, -22, -31, -29);
     ctx.fillStyle = '#ffccd5';
     ctx.fill();
 
     // Tai phải (nhỏ hơn ~25%)
     ctx.beginPath();
-    ctx.ellipse(-15, -30, 6, 18, -Math.PI / 6, 0, Math.PI * 2);
+    ctx.moveTo(-15, -30); // Điểm bắt đầu trên đầu
+    ctx.quadraticCurveTo(-5, -40, 5, -30); // Cong sang phải
+    ctx.quadraticCurveTo(-5, -20, -15, -30); // Cong về để tạo hình tai
     ctx.fillStyle = '#d3a8a8';
     ctx.fill();
     ctx.beginPath();
-    ctx.ellipse(-15, -30, 4.5, 16.5, -Math.PI / 6, 0, Math.PI * 2);
+    ctx.moveTo(-14, -29);
+    ctx.quadraticCurveTo(-6, -38, 3, -29); // Lớp trong nhỏ hơn
+    ctx.quadraticCurveTo(-6, -22, -14, -29);
     ctx.fillStyle = '#ffccd5';
     ctx.fill();
 
