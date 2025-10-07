@@ -245,22 +245,6 @@
     ctx.fillStyle = '#f0c4c4';
     ctx.fill();
 
-    // Tay trái (cong vảnh lên)
-    ctx.beginPath();
-    ctx.moveTo(-10, 0);
-    ctx.quadraticCurveTo(-20, -10, -25, -20);
-    ctx.lineWidth = 4;
-    ctx.strokeStyle = '#d3a8a8';
-    ctx.stroke();
-
-    // Tay phải (cong vảnh lên)
-    ctx.beginPath();
-    ctx.moveTo(10, 0);
-    ctx.quadraticCurveTo(20, -10, 25, -20);
-    ctx.lineWidth = 4;
-    ctx.strokeStyle = '#d3a8a8';
-    ctx.stroke();
-
     // Tắt bóng mờ
     ctx.shadowBlur = 0;
     ctx.restore();
