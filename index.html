@@ -151,44 +151,86 @@
 
         // Vẽ thỏ xinh hơn với chuyển động nhẹ dưới gốc cây
         const rabbits = [
-            { x: canvas.width / 2 - 80, y: canvas.height * 0.75 + treeOffsetY, angle: 0, hop: 0 },
-            { x: canvas.width / 2 - 20, y: canvas.height * 0.75 + treeOffsetY, angle: 0, hop: 0 },
-            { x: canvas.width / 2 + 40, y: canvas.height * 0.75 + treeOffsetY, angle: 0, hop: 0 }
+            { x: canvas.width / 2 - 80, y: canvas.height * 0.75 + treeOffsetY, angle: 0, hop: 0, targetX: 0, targetY: 0, speed: 0 },
+            { x: canvas.width / 2 - 20, y: canvas.height * 0.75 + treeOffsetY, angle: 0, hop: 0, targetX: 0, targetY: 0, speed: 0 },
+            { x: canvas.width / 2 + 40, y: canvas.height * 0.75 + treeOffsetY, angle: 0, hop: 0, targetX: 0, targetY: 0, speed: 0 }
         ];
 
         function drawRabbit(x, y, angle, hop) {
-            ctx.save();
-            ctx.translate(x, y - hop);
-            ctx.rotate(angle);
-            // Thân
-            ctx.beginPath();
-            ctx.ellipse(0, 0, 20, 15, 0, 0, Math.PI * 2);
-            ctx.fillStyle = '#d3a8a8';
-            ctx.fill();
-            // Đầu
-            ctx.beginPath();
-            ctx.arc(-15, -10, 10, 0, Math.PI * 2);
-            ctx.fill();
-            // Tai trái
-            ctx.beginPath();
-            ctx.ellipse(-20, -20, 4, 12, Math.PI / 6, 0, Math.PI * 2);
-            ctx.fill();
-            // Tai phải
-            ctx.beginPath();
-            ctx.ellipse(-10, -20, 4, 12, -Math.PI / 6, 0, Math.PI * 2);
-            ctx.fill();
-            // Mắt
-            ctx.beginPath();
-            ctx.arc(-17, -12, 1.5, 0, Math.PI * 2);
-            ctx.fillStyle = '#000';
-            ctx.fill();
-            // Mũi
-            ctx.beginPath();
-            ctx.arc(-12, -6, 1, 0, Math.PI * 2);
-            ctx.fillStyle = '#ff69b4';
-            ctx.fill();
-            ctx.restore();
-        }
+    ctx.save();
+    ctx.translate(x, y - hop);
+    ctx.rotate(angle);
+
+    // Bật bóng mờ cho chiều sâu
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+    ctx.shadowBlur = 10;
+    ctx.shadowOffsetX = 5;
+    ctx.shadowOffsetY = 5;
+
+    // Thân (to hơn, gradient mịn)
+    const bodyGradient = ctx.createLinearGradient(0, -20, 0, 20);
+    bodyGradient.addColorStop(0, '#f0c4c4');
+    bodyGradient.addColorStop(1, '#d3a8a8');
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 40, 30, 0, 0, Math.PI * 2); // To gấp đôi
+    ctx.fillStyle = bodyGradient;
+    ctx.fill();
+
+    // Đầu (to hơn, gradient)
+    const headGradient = ctx.createRadialGradient(-30, -20, 5, -30, -20, 20);
+    headGradient.addColorStop(0, '#ffffff');
+    headGradient.addColorStop(1, '#d3a8a8');
+    ctx.beginPath();
+    ctx.arc(-30, -20, 20, 0, Math.PI * 2); // To gấp đôi
+    ctx.fillStyle = headGradient;
+    ctx.fill();
+
+    // Tai trái (to hơn, thêm viền hồng)
+    ctx.beginPath();
+    ctx.ellipse(-40, -40, 8, 24, Math.PI / 6, 0, Math.PI * 2); // To gấp đôi
+    ctx.fillStyle = '#d3a8a8';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(-40, -40, 6, 22, Math.PI / 6, 0, Math.PI * 2);
+    ctx.fillStyle = '#ffccd5';
+    ctx.fill();
+
+    // Tai phải (to hơn, thêm viền hồng)
+    ctx.beginPath();
+    ctx.ellipse(-20, -40, 8, 24, -Math.PI / 6, 0, Math.PI * 2); // To gấp đôi
+    ctx.fillStyle = '#d3a8a8';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(-20, -40, 6, 22, -Math.PI / 6, 0, Math.PI * 2);
+    ctx.fillStyle = '#ffccd5';
+    ctx.fill();
+
+    // Mắt (to hơn, thêm điểm sáng)
+    ctx.beginPath();
+    ctx.arc(-34, -24, 3, 0, Math.PI * 2); // To gấp đôi
+    ctx.fillStyle = '#000';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(-33, -25, 1, 0, Math.PI * 2); // Điểm sáng
+    ctx.fillStyle = '#fff';
+    ctx.fill();
+
+    // Mũi (to hơn)
+    ctx.beginPath();
+    ctx.arc(-24, -12, 2, 0, Math.PI * 2); // To gấp đôi
+    ctx.fillStyle = '#ff69b4';
+    ctx.fill();
+
+    // Đuôi (thêm mới, hình tròn nhỏ)
+    ctx.beginPath();
+    ctx.arc(30, 10, 10, 0, Math.PI * 2);
+    ctx.fillStyle = '#f0c4c4';
+    ctx.fill();
+
+    // Tắt bóng mờ
+    ctx.shadowBlur = 0;
+    ctx.restore();
+}
 
         // Cập nhật chuyển động xinh của thỏ
         function updateRabbits() {
