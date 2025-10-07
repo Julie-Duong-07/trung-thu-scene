@@ -193,6 +193,22 @@
         // Cập nhật chuyển động xinh của thỏ
         function updateRabbits() {
             rabbits.forEach(rabbit => {
+                // Tạo điểm đích ngẫu nhiên nếu chưa có hoặc đã đến đích
+                if (rabbit.speed === 0 || (Math.abs(rabbit.x - rabbit.targetX) < 5 && Math.abs(rabbit.y - rabbit.targetY) < 5)) {
+                    const centerX = canvas.width / 2;
+                    const baseY = canvas.height * 0.75 + treeOffsetY;
+                    rabbit.targetX = centerX + (Math.random() - 0.5) * 200; // Di chuyển trong bán kính 200px quanh gốc cây
+                    rabbit.targetY = baseY + (Math.random() - 0.5) * 50; // Giới hạn vùng y gần gốc cây
+                    rabbit.speed = Math.random() * 0.5 + 0.2; // Tốc độ ngẫu nhiên
+                }
+                // Di chuyển mượt mà đến điểm đích
+                const dx = rabbit.targetX - rabbit.x;
+                const dy = rabbit.targetY - rabbit.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                if (distance > 1) {
+                    rabbit.x += (dx / distance) * rabbit.speed;
+                    rabbit.y += (dy / distance) * rabbit.speed;
+                }
                 rabbit.angle = Math.sin(Date.now() * 0.005) * 0.1;
                 rabbit.hop = Math.abs(Math.sin(Date.now() * 0.01)) * 5;
             });
@@ -233,7 +249,89 @@
                 if (lantern.y < -50) lantern.y = canvas.height; // Reset từ dưới
             });
         }
+// Đèn trời (Sky Lanterns)
+        const skyLanterns = [];
+        function initializeSkyLanterns() {
+            for (let i = 0; i < 10; i++) {
+                skyLanterns.push({
+                    x: Math.random() * canvas.width,
+                    y: canvas.height + 50,
+                    speedY: -(Math.random() * 0.5 + 0.5), // Bay lên chậm
+                    sway: Math.random() * 0.02, // Độ lắc lư
+                    phase: Math.random() * Math.PI * 2 // Giai đoạn lắc lư
+                });
+            }
+        }
+        initializeSkyLanterns();
 
+        function drawSkyLantern(x, y, phase) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(Math.sin(Date.now() * 0.002 + phase) * 0.1); // Lắc lư
+            ctx.beginPath();
+            ctx.moveTo(0, -20);
+            ctx.lineTo(-15, 10);
+            ctx.lineTo(15, 10);
+            ctx.closePath();
+            ctx.fillStyle = '#ffcc00'; // Màu vàng cam ấm áp
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(0, -10, 5, 0, Math.PI * 2);
+            ctx.fillStyle = '#ffff99';
+            ctx.fill();
+            ctx.restore();
+        }
+
+        function updateSkyLanterns() {
+            skyLanterns.forEach(lantern => {
+                lantern.y += lantern.speedY;
+                lantern.x += Math.sin(Date.now() * 0.002 + lantern.phase) * lantern.sway; // Lắc lư ngang
+                if (lantern.y < -50) {
+                    lantern.y = canvas.height + 50;
+                    lantern.x = Math.random() * canvas.width;
+                }
+            });
+        }
+
+        // Sao băng (Meteor Shower)
+        const meteors = [];
+        function createMeteor() {
+            const startX = Math.random() * canvas.width;
+            const startY = Math.random() * canvas.height * 0.3;
+            meteors.push({
+                x: startX,
+                y: startY,
+                length: Math.random() * 20 + 10,
+                speedX: (Math.random() - 0.5) * 8,
+                speedY: Math.random() * 4 + 2,
+                opacity: 1
+            });
+        }
+
+        function updateMeteors() {
+            if (Math.random() < 0.02) createMeteor(); // Tần suất thấp
+            for (let i = meteors.length - 1; i >= 0; i--) {
+                meteors[i].x += meteors[i].speedX;
+                meteors[i].y += meteors[i].speedY;
+                meteors[i].opacity -= 0.01;
+                if (meteors[i].opacity <= 0 || meteors[i].y > canvas.height || meteors[i].x < 0 || meteors[i].x > canvas.width) {
+                    meteors.splice(i, 1);
+                }
+            }
+        }
+
+        function drawMeteors() {
+            meteors.forEach(meteor => {
+                ctx.globalAlpha = meteor.opacity;
+                ctx.beginPath();
+                ctx.moveTo(meteor.x, meteor.y);
+                ctx.lineTo(meteor.x - meteor.speedX * meteor.length / 10, meteor.y - meteor.speedY * meteor.length / 10);
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            });
+            ctx.globalAlpha = 1;
+        }
         // Vẽ dòng chữ "Happy Mid-Autumn Festival <3" trắng sáng ở giữa trên cùng
         function drawText() {
             ctx.font = 'bold 40px Arial';
@@ -241,7 +339,7 @@
             ctx.textAlign = 'center';
             ctx.shadowColor = '#ffffff';
             ctx.shadowBlur = 10;
-            ctx.fillText("Chúc Anh Trung Thu Vui Vẻ 🥮 hehe ", canvas.width / 2, 150);
+            ctx.fillText("Chúc Anh Trung Thu Vui Vẻ 🥮 hehe ", canvas.width / 2, 250);
             ctx.shadowBlur = 0;
         }
 // THÊM HIỆU ỨNG PHÁO HOA (Fireworks) - Bùng nổ khi load và ngẫu nhiên sau đó
@@ -269,9 +367,9 @@
         }
 
         function updateFireworks() {
-            // Pháo hoa ban đầu khi load (bùng nổ 5 quả ngẫu nhiên)
+            // Pháo hoa ban đầu khi load (bùng nổ 10 quả ngẫu nhiên)
             if (!initialFireworksTriggered) {
-                for (let i = 0; i < 5; i++) {
+                for (let i = 0; i < 10; i++) {
                     createFirework(Math.random() * canvas.width, Math.random() * canvas.height * 0.6);
                 }
                 initialFireworksTriggered = true;
@@ -312,10 +410,12 @@
         function drawScene() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawStars();
+	    drawMeteors();
             drawMoon();
             drawTree();
             drawFallingFlowers();
             lanterns.forEach(lantern => drawLantern(lantern.x, lantern.y));
+	    skyLanterns.forEach(lantern => drawSkyLantern(lantern.x, lantern.y, lantern.phase));
             rabbits.forEach(rabbit => drawRabbit(rabbit.x, rabbit.y, rabbit.angle, rabbit.hop));
             drawText();
 	    drawFireworks();
@@ -325,7 +425,9 @@
         function animate() {
             updateRabbits();
             updateLanterns();
+	    updateSkyLanterns();
             updateFallingFlowers();
+	    updateMeteors();
 	    updateFireworks();
             drawScene();
             requestAnimationFrame(animate);
@@ -348,7 +450,9 @@
             rabbits.forEach(r => r.y = canvas.height * 0.75 + treeOffsetY);
             flowers.length = 0; // Tái tạo hoa để phù hợp kích thước mới
             lanterns.length = 0; // Reset lồng đèn khi resize
+	    skyLanterns.length = 0;
             initializeLanterns();
+	    initializeSkyLanterns();
         });
 
         animate();
