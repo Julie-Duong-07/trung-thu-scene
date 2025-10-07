@@ -151,10 +151,10 @@
 
         // Vẽ thỏ xinh hơn với chuyển động nhẹ dưới gốc cây
         const rabbits = [
-            { x: canvas.width / 2 - 80, y: canvas.height * 0.75 + treeOffsetY, angle: 0, hop: 0, targetX: 0, targetY: 0, speed: 0 },
-            { x: canvas.width / 2 - 20, y: canvas.height * 0.75 + treeOffsetY, angle: 0, hop: 0, targetX: 0, targetY: 0, speed: 0 },
-            { x: canvas.width / 2 + 40, y: canvas.height * 0.75 + treeOffsetY, angle: 0, hop: 0, targetX: 0, targetY: 0, speed: 0 }
-        ];
+    { x: canvas.width / 2 - 80, y: canvas.height * 0.75 + treeOffsetY, angle: 0, hop: 0, targetX: canvas.width / 2 - 80 + (Math.random() - 0.5) * 200, targetY: canvas.height * 0.75 + treeOffsetY + (Math.random() - 0.5) * 50, speed: Math.random() * 1 + 0.5 },
+    { x: canvas.width / 2 - 20, y: canvas.height * 0.75 + treeOffsetY, angle: 0, hop: 0, targetX: canvas.width / 2 - 20 + (Math.random() - 0.5) * 200, targetY: canvas.height * 0.75 + treeOffsetY + (Math.random() - 0.5) * 50, speed: Math.random() * 1 + 0.5 },
+    { x: canvas.width / 2 + 40, y: canvas.height * 0.75 + treeOffsetY, angle: 0, hop: 0, targetX: canvas.width / 2 + 40 + (Math.random() - 0.5) * 200, targetY: canvas.height * 0.75 + treeOffsetY + (Math.random() - 0.5) * 50, speed: Math.random() * 1 + 0.5 }
+];
 
         function drawRabbit(x, y, angle, hop) {
     ctx.save();
@@ -163,69 +163,95 @@
 
     // Bật bóng mờ cho chiều sâu
     ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
-    ctx.shadowBlur = 10;
-    ctx.shadowOffsetX = 5;
-    ctx.shadowOffsetY = 5;
+    ctx.shadowBlur = 8;
+    ctx.shadowOffsetX = 4;
+    ctx.shadowOffsetY = 4;
 
-    // Thân (to hơn, gradient mịn)
-    const bodyGradient = ctx.createLinearGradient(0, -20, 0, 20);
+    // Thân (nhỏ hơn ~25%)
+    const bodyGradient = ctx.createLinearGradient(0, -15, 0, 15);
     bodyGradient.addColorStop(0, '#f0c4c4');
     bodyGradient.addColorStop(1, '#d3a8a8');
     ctx.beginPath();
-    ctx.ellipse(0, 0, 40, 30, 0, 0, Math.PI * 2); // To gấp đôi
+    ctx.ellipse(0, 0, 30, 22.5, 0, 0, Math.PI * 2);
     ctx.fillStyle = bodyGradient;
     ctx.fill();
 
-    // Đầu (to hơn, gradient)
-    const headGradient = ctx.createRadialGradient(-30, -20, 5, -30, -20, 20);
+    // Đầu (nhỏ hơn ~25%)
+    const headGradient = ctx.createRadialGradient(-22.5, -15, 4, -22.5, -15, 15);
     headGradient.addColorStop(0, '#ffffff');
     headGradient.addColorStop(1, '#d3a8a8');
     ctx.beginPath();
-    ctx.arc(-30, -20, 20, 0, Math.PI * 2); // To gấp đôi
+    ctx.arc(-22.5, -15, 15, 0, Math.PI * 2);
     ctx.fillStyle = headGradient;
     ctx.fill();
 
-    // Tai trái (to hơn, thêm viền hồng)
+    // Tai trái (nhỏ hơn ~25%)
     ctx.beginPath();
-    ctx.ellipse(-40, -40, 8, 24, Math.PI / 6, 0, Math.PI * 2); // To gấp đôi
+    ctx.ellipse(-30, -30, 6, 18, Math.PI / 6, 0, Math.PI * 2);
     ctx.fillStyle = '#d3a8a8';
     ctx.fill();
     ctx.beginPath();
-    ctx.ellipse(-40, -40, 6, 22, Math.PI / 6, 0, Math.PI * 2);
+    ctx.ellipse(-30, -30, 4.5, 16.5, Math.PI / 6, 0, Math.PI * 2);
     ctx.fillStyle = '#ffccd5';
     ctx.fill();
 
-    // Tai phải (to hơn, thêm viền hồng)
+    // Tai phải (nhỏ hơn ~25%)
     ctx.beginPath();
-    ctx.ellipse(-20, -40, 8, 24, -Math.PI / 6, 0, Math.PI * 2); // To gấp đôi
+    ctx.ellipse(-15, -30, 6, 18, -Math.PI / 6, 0, Math.PI * 2);
     ctx.fillStyle = '#d3a8a8';
     ctx.fill();
     ctx.beginPath();
-    ctx.ellipse(-20, -40, 6, 22, -Math.PI / 6, 0, Math.PI * 2);
+    ctx.ellipse(-15, -30, 4.5, 16.5, -Math.PI / 6, 0, Math.PI * 2);
     ctx.fillStyle = '#ffccd5';
     ctx.fill();
 
-    // Mắt (to hơn, thêm điểm sáng)
+    // Mắt trái (thêm điểm sáng)
     ctx.beginPath();
-    ctx.arc(-34, -24, 3, 0, Math.PI * 2); // To gấp đôi
+    ctx.arc(-26, -18, 2.5, 0, Math.PI * 2);
     ctx.fillStyle = '#000';
     ctx.fill();
     ctx.beginPath();
-    ctx.arc(-33, -25, 1, 0, Math.PI * 2); // Điểm sáng
+    ctx.arc(-25.5, -18.5, 0.8, 0, Math.PI * 2);
     ctx.fillStyle = '#fff';
     ctx.fill();
 
-    // Mũi (to hơn)
+    // Mắt phải (đối xứng)
     ctx.beginPath();
-    ctx.arc(-24, -12, 2, 0, Math.PI * 2); // To gấp đôi
+    ctx.arc(-19, -18, 2.5, 0, Math.PI * 2);
+    ctx.fillStyle = '#000';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(-18.5, -18.5, 0.8, 0, Math.PI * 2);
+    ctx.fillStyle = '#fff';
+    ctx.fill();
+
+    // Mũi (nhỏ hơn ~25%)
+    ctx.beginPath();
+    ctx.arc(-22.5, -9, 1.5, 0, Math.PI * 2);
     ctx.fillStyle = '#ff69b4';
     ctx.fill();
 
-    // Đuôi (thêm mới, hình tròn nhỏ)
+    // Đuôi (nhỏ hơn ~25%)
     ctx.beginPath();
-    ctx.arc(30, 10, 10, 0, Math.PI * 2);
+    ctx.arc(22.5, 7.5, 7.5, 0, Math.PI * 2);
     ctx.fillStyle = '#f0c4c4';
     ctx.fill();
+
+    // Tay trái (cong vảnh lên)
+    ctx.beginPath();
+    ctx.moveTo(-10, 0);
+    ctx.quadraticCurveTo(-20, -10, -25, -20);
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = '#d3a8a8';
+    ctx.stroke();
+
+    // Tay phải (cong vảnh lên)
+    ctx.beginPath();
+    ctx.moveTo(10, 0);
+    ctx.quadraticCurveTo(20, -10, 25, -20);
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = '#d3a8a8';
+    ctx.stroke();
 
     // Tắt bóng mờ
     ctx.shadowBlur = 0;
@@ -234,27 +260,27 @@
 
         // Cập nhật chuyển động xinh của thỏ
         function updateRabbits() {
-            rabbits.forEach(rabbit => {
-                // Tạo điểm đích ngẫu nhiên nếu chưa có hoặc đã đến đích
-                if (rabbit.speed === 0 || (Math.abs(rabbit.x - rabbit.targetX) < 5 && Math.abs(rabbit.y - rabbit.targetY) < 5)) {
-                    const centerX = canvas.width / 2;
-                    const baseY = canvas.height * 0.75 + treeOffsetY;
-                    rabbit.targetX = centerX + (Math.random() - 0.5) * 200; // Di chuyển trong bán kính 200px quanh gốc cây
-                    rabbit.targetY = baseY + (Math.random() - 0.5) * 50; // Giới hạn vùng y gần gốc cây
-                    rabbit.speed = Math.random() * 0.5 + 0.2; // Tốc độ ngẫu nhiên
-                }
-                // Di chuyển mượt mà đến điểm đích
-                const dx = rabbit.targetX - rabbit.x;
-                const dy = rabbit.targetY - rabbit.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-                if (distance > 1) {
-                    rabbit.x += (dx / distance) * rabbit.speed;
-                    rabbit.y += (dy / distance) * rabbit.speed;
-                }
-                rabbit.angle = Math.sin(Date.now() * 0.005) * 0.1;
-                rabbit.hop = Math.abs(Math.sin(Date.now() * 0.01)) * 5;
-            });
+    rabbits.forEach(rabbit => {
+        // Tạo điểm đích ngẫu nhiên nếu đã đến đích hoặc tốc độ bằng 0
+        if (rabbit.speed === 0 || (Math.abs(rabbit.x - rabbit.targetX) < 5 && Math.abs(rabbit.y - rabbit.targetY) < 5)) {
+            const centerX = canvas.width / 2;
+            const baseY = canvas.height * 0.75 + treeOffsetY;
+            rabbit.targetX = centerX + (Math.random() - 0.5) * 200;
+            rabbit.targetY = baseY + (Math.random() - 0.5) * 50;
+            rabbit.speed = Math.random() * 1 + 0.5;
         }
+        // Di chuyển mượt mà đến điểm đích
+        const dx = rabbit.targetX - rabbit.x;
+        const dy = rabbit.targetY - rabbit.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        if (distance > 1) {
+            rabbit.x += (dx / distance) * rabbit.speed;
+            rabbit.y += (dy / distance) * rabbit.speed;
+            rabbit.angle = Math.atan2(dy, dx) * 0.2;
+        }
+        rabbit.hop = Math.abs(Math.sin(Date.now() * 0.01)) * 8;
+    });
+}
 
         // Vẽ lồng đèn di chuyển chậm từ dưới lên, ngẫu nhiên không theo hàng
         const lanterns = [];
@@ -486,10 +512,24 @@
                 star.y = Math.random() * (canvas.height * 0.5);
             });
             const centerX = canvas.width / 2;
+	    const baseY = canvas.height * 0.75 + treeOffsetY;
             rabbits[0].x = centerX - 80;
-            rabbits[1].x = centerX - 20;
-            rabbits[2].x = centerX + 40;
-            rabbits.forEach(r => r.y = canvas.height * 0.75 + treeOffsetY);
+    rabbits[0].y = baseY;
+    rabbits[0].targetX = centerX - 80 + (Math.random() - 0.5) * 200;
+    rabbits[0].targetY = baseY + (Math.random() - 0.5) * 50;
+    rabbits[0].speed = Math.random() * 1 + 0.5;
+
+    rabbits[1].x = centerX - 20;
+    rabbits[1].y = baseY;
+    rabbits[1].targetX = centerX - 20 + (Math.random() - 0.5) * 200;
+    rabbits[1].targetY = baseY + (Math.random() - 0.5) * 50;
+    rabbits[1].speed = Math.random() * 1 + 0.5;
+
+    rabbits[2].x = centerX + 40;
+    rabbits[2].y = baseY;
+    rabbits[2].targetX = centerX + 40 + (Math.random() - 0.5) * 200;
+    rabbits[2].targetY = baseY + (Math.random() - 0.5) * 50;
+    rabbits[2].speed = Math.random() * 1 + 0.5;
             flowers.length = 0; // Tái tạo hoa để phù hợp kích thước mới
             lanterns.length = 0; // Reset lồng đèn khi resize
 	    skyLanterns.length = 0;
