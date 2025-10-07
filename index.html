@@ -241,10 +241,73 @@
             ctx.textAlign = 'center';
             ctx.shadowColor = '#ffffff';
             ctx.shadowBlur = 10;
-            ctx.fillText("Happy Mid-Autumn Festival <3", canvas.width / 2, 150);
+            ctx.fillText("Chúc Anh Trung Thu Vui Vẻ 🥮 hehe ", canvas.width / 2, 150);
             ctx.shadowBlur = 0;
         }
+// THÊM HIỆU ỨNG PHÁO HOA (Fireworks) - Bùng nổ khi load và ngẫu nhiên sau đó
+        const fireworks = [];
+        let initialFireworksTriggered = false; // Biến kiểm soát pháo hoa ban đầu
 
+        function createFirework(x, y) {
+            const colors = ['#ff4444', '#44ff44', '#4444ff', '#ffff44', '#ff44ff', '#ffcc00'];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            const particles = [];
+            for (let i = 0; i < 60; i++) { // Tăng số hạt cho đẹp hơn
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 5 + 2;
+                particles.push({
+                    x: x,
+                    y: y,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    size: Math.random() * 3 + 1,
+                    opacity: 1,
+                    life: 120 // Tăng tuổi thọ hạt
+                });
+            }
+            fireworks.push({ particles, color });
+        }
+
+        function updateFireworks() {
+            // Pháo hoa ban đầu khi load (bùng nổ 5 quả ngẫu nhiên)
+            if (!initialFireworksTriggered) {
+                for (let i = 0; i < 5; i++) {
+                    createFirework(Math.random() * canvas.width, Math.random() * canvas.height * 0.6);
+                }
+                initialFireworksTriggered = true;
+            }
+
+            // Pháo hoa ngẫu nhiên sau đó (xác suất thấp để không lấn át)
+            if (Math.random() < 0.01) { // 1% cơ hội mỗi frame
+                createFirework(Math.random() * canvas.width, Math.random() * canvas.height * 0.6);
+            }
+
+            for (let i = fireworks.length - 1; i >= 0; i--) {
+                const fw = fireworks[i];
+                fw.particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.03; // Trọng lực nhẹ
+                    p.opacity -= 0.008; // Mờ dần chậm hơn
+                    p.life--;
+                });
+                fw.particles = fw.particles.filter(p => p.life > 0);
+                if (fw.particles.length === 0) fireworks.splice(i, 1);
+            }
+        }
+
+        function drawFireworks() {
+            fireworks.forEach(fw => {
+                fw.particles.forEach(p => {
+                    ctx.globalAlpha = p.opacity;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fillStyle = fw.color;
+                    ctx.fill();
+                });
+            });
+            ctx.globalAlpha = 1;
+        }
         // Vẽ toàn cảnh
         function drawScene() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -255,6 +318,7 @@
             lanterns.forEach(lantern => drawLantern(lantern.x, lantern.y));
             rabbits.forEach(rabbit => drawRabbit(rabbit.x, rabbit.y, rabbit.angle, rabbit.hop));
             drawText();
+	    drawFireworks();
         }
 
         // Animation mượt mà
@@ -262,6 +326,7 @@
             updateRabbits();
             updateLanterns();
             updateFallingFlowers();
+	    updateFireworks();
             drawScene();
             requestAnimationFrame(animate);
         }
